@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>متجر نَبِعْ للعطور</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* التنسيق والألوان المعتمدة (البيج والترابي الراقي) */
+        :root {
+            --bg-color: #F5F2EB; /* لون البيج الأساسي للموقع */
+            --primary-color: #705646; /* لون البني/الترابي المتناسق مع الكود 7056 */
+            --text-color: #4A3E3D;
+            --white: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        /* الهيدر (أعلى الموقع) */
+        header {
+            background-color: var(--white);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 5%;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .cart-icon-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: var(--primary-color);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background-color: red;
+            color: white;
+            font-size: 12px;
+            padding: 2px 6px;
+            border-radius: 50%;
+        }
+
+        .logo-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex-grow: 1;
+            text-align: center;
+        }
+
+        /* مكان وضع الشعار الخاص بك */
+        .store-logo {
+            width: 60px; /* يمكنك التحكم بالحجم من هنا */
+            height: 60px;
+            object-fit: contain;
+            margin-bottom: 5px;
+        }
+
+        .logo-area h1 {
+            font-size: 22px;
+            color: var(--primary-color);
+            letter-spacing: 1px;
+        }
+
+        .spacer {
+            width: 30px; /* لعمل توازن مع زر السلة بالطرف المقابل */
+        }
+
+        /* الحاوية الأساسية للمنتجات */
+        .container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 600px) {
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .product-card {
+            background-color: var(--white);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            transition: transform 0.3s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .product-img {
+            width: 40%;
+            max-height: 250px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .product-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: var(--text-color);
+        }
+
+        /* أزرار اختيار الحجم والسعر */
+        .size-selector {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-size: 15px;
+            margin-bottom: 15px;
+            outline: none;
+        }
+
+        /* زر الإضافة للسلة */
+        .btn-add-to-cart {
+            background-color: var(--primary-color);
+            color: var(--white);
+            border: none;
+            padding: 12px 25px;
+            width: 100%;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+
+        .btn-add-to-cart:hover {
+            background-color: #5a4437;
+        }
+
+        /* قسم استمارة الشراء والسلة */
+        .checkout-section {
+            background-color: var(--white);
+            border-radius: 12px;
+            padding: 30px;
+            margin-top: 50px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+        }
+
+        .checkout-section h2 {
+            margin-bottom: 20px;
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--bg-color);
+            padding-bottom: 10px;
+        }
+
+        .cart-summary {
+            background-color: var(--bg-color);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+
+        .cart-item-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            outline: none;
+            font-size: 15px;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+        }
+
+        .price-summary {
+            margin-top: 20px;
+            background: #fff8f3;
+            padding: 15px;
+            border-radius: 6px;
+            border-right: 4px solid var(--primary-color);
+        }
+
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .price-row.total {
+            font-weight: bold;
+            font-size: 18px;
+            color: var(--primary-color);
+            border-top: 1px dashed #ddd;
+            padding-top: 10px;
+            margin-bottom: 0;
+        }
+
+        .btn-checkout {
+            background-color: #25D366; /* لون الواتساب الأخضر */
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 15px;
+            border-radius: 6px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-checkout:hover {
+            background-color: #1ebd57;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <button class="cart-icon-btn" onclick="scrollToCheckout()" title="الذهاب إلى السلة">
+            <i class="fa-solid fa-basket-shopping"></i>
+            <span class="cart-count" id="cart-count">0</span>
+        </button>
+
+        <div class="logo-area">
+            <img src="logo.png" alt="شعار نَبِعْ" class="store-logo" onerror="this.style.display='none'"> 
+            <h1>نَبِعْ</h1>
+        </div>
+
+        <div class="spacer"></div>
+    </header>
+
+    <div class="container">
+        
+        <div class="products-grid">
+            
+            <div class="product-card">
+                <img src="https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.64338.avif" alt="1" class="product-img" onerror="this.src='https://via.placeholder.com/250x250?text=Perfume+1'">
+                <h3 class="product-title" id="p1-title">bois imperial</h3>
+                
+                <select class="size-selector" id="p1-size">
+                    <option value="2ml" data-price="5000">2ml = 5,000 د.ع</option>
+                    <option value="3ml" data-price="8000">3ml = 8,000 د.ع</option>
+                    <option value="5ml" data-price="12000" selected>5ml = 12,000 د.ع</option>
+                    <option value="10ml" data-price="23000">10ml = 23,000 د.ع</option>
+                </select>
+                
+                <button class="btn-add-to-cart" onclick="addToCart(1)">إضافة إلى السلة</button>
+            </div>
+
+            <div class="product-card">
+                <img src="https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.97259.avif" alt="2" class="product-img" onerror="this.src='https://via.placeholder.com/250x250?text=Perfume+2'">
+                <h3 class="product-title" id="p2-title">bois imperial extrait</h3>
+                
+                <select class="size-selector" id="p2-size">
+                    <option value="2ml" data-price="15000">2ml = 15,000 د.ع</option>
+                    <option value="3ml" data-price="22000">3ml = 22,000 د.ع</option>
+                    <option value="5ml" data-price="36000" selected>5ml = 36,000 د.ع</option>
+                    <option value="10ml" data-price="70000">10ml = 70,000 د.ع</option>
+                </select>
+                
+                <button class="btn-add-to-cart" onclick="addToCart(2)">إضافة إلى السلة</button>
+            </div>
+
+            <div class="product-card">
+                <img src="https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.56097.avif" alt="3" class="product-img" onerror="this.src='https://via.placeholder.com/250x250?text=Perfume+1'">
+                <h3 class="product-title" id="p3-title">Accento Overdose Xerjoff</h3>
+                
+                <select class="size-selector" id="p3-size">
+                    <option value="2ml" data-price="8000">2ml = 8,000 د.ع</option>
+                    <option value="3ml" data-price="12000">3ml = 12,000 د.ع</option>
+                    <option value="5ml" data-price="18000" selected>5ml = 18,000 د.ع</option>
+                    <option value="10ml" data-price="35000">10ml = 35,000 د.ع</option>
+                </select>
+                
+                <button class="btn-add-to-cart" onclick="addToCart(3)">إضافة إلى السلة</button>
+            </div>
+
+            <div class="product-card">
+                <img src="https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.81476.avif" alt="4" class="product-img" onerror="this.src='https://via.placeholder.com/250x250?text=Perfume+1'">
+                <h3 class="product-title" id="p4-title">Summer Hammer Lorenzo Pazzaglia</h3>
+                
+                <select class="size-selector" id="p4-size">
+                    <option value="2ml" data-price="10000">2ml = 10,000 د.ع</option>
+                    <option value="3ml" data-price="13000">3ml = 13,000 د.ع</option>
+                    <option value="5ml" data-price="23000" selected>5ml = 23,000 د.ع</option>
+                    <option value="10ml" data-price="45000">10ml = 45,000 د.ع</option>
+                </select>
+                
+                <button class="btn-add-to-cart" onclick="addToCart(4)">إضافة إلى السلة</button>
+            </div>
+
+             <div class="product-card">
+                <img src="https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.55858.avif" alt="5" class="product-img" onerror="this.src='https://via.placeholder.com/250x250?text=Perfume+1'">
+                <h3 class="product-title" id="p5-title">Toy Boy Moschino</h3>
+                
+                <select class="size-selector" id="p5-size">
+                    <option value="3ml" data-price="5000">3ml = 5,000 د.ع</option>
+                    <option value="5ml" data-price="7000" selected>5ml = 7,000 د.ع</option>
+                    <option value="10ml" data-price="12000">10ml = 12,000 د.ع</option>
+                </select>
+                
+                <button class="btn-add-to-cart" onclick="addToCart(5)">إضافة إلى السلة</button>
+            </div>
+
+            <div class="product-card">
+                <img src="https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.75930.avif" alt="6" class="product-img" onerror="this.src='https://via.placeholder.com/250x250?text=Perfume+1'">
+                <h3 class="product-title" id="p6-title">Vibrato Sospiro</h3>
+                
+                <select class="size-selector" id="p6-size">
+                    <option value="2ml" data-price="8000">2ml = 8,000 د.ع</option>
+                    <option value="3ml" data-price="12000">3ml = 12,000 د.ع</option>
+                    <option value="5ml" data-price="18000" selected>5ml = 18,000 د.ع</option>
+                    <option value="10ml" data-price="35000">10ml = 35,000 د.ع</option>
+                </select>
+                
+                <button class="btn-add-to-cart" onclick="addToCart(6)">إضافة إلى السلة</button>
+            </div>
+            
+
+            <div class="product-card">
+                <img src="https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.102896.avif" alt="7" class="product-img" onerror="this.src='https://via.placeholder.com/250x250?text=Perfume+1'">
+                <h3 class="product-title" id="p7-title">Passionfroudh Fugazzi</h3>
+                
+                <select class="size-selector" id="p7-size">
+                    <option value="2ml" data-price="6000">2ml = 6,000 د.ع</option>
+                    <option value="3ml" data-price="9000">3ml = 9,000 د.ع</option>
+                    <option value="5ml" data-price="13000" selected>5ml = 13,000 د.ع</option>
+                    <option value="10ml" data-price="24000">10ml = 24,000 د.ع</option>
+                </select>
+                
+                <button class="btn-add-to-cart" onclick="addToCart(7)">إضافة إلى السلة</button>
+            </div>
+
+             <div class="product-card">
+                <img src="https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.107428.avif" alt="8" class="product-img" onerror="this.src='https://via.placeholder.com/250x250?text=Perfume+1'">
+                <h3 class="product-title" id="p8-title">MYSLF L’Absolu Yves Saint Laurent</h3>
+                
+                <select class="size-selector" id="p8-size">
+                    <option value="2ml" data-price="6000">2ml = 6,000 د.ع</option>
+                    <option value="3ml" data-price="9000">3ml = 9,000 د.ع</option>
+                    <option value="5ml" data-price="13000" selected>5ml = 13,000 د.ع</option>
+                    <option value="10ml" data-price="24000">10ml = 24,000 د.ع</option>
+                </select>
+                
+                <button class="btn-add-to-cart" onclick="addToCart(8)">إضافة إلى السلة</button>
+            </div>
+
+
+            <div class="product-card">
+                <img src="https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.75094.avif" alt="9" class="product-img" onerror="this.src='https://via.placeholder.com/250x250?text=Perfume+1'">
+                <h3 class="product-title" id="p9-title">Valentino Uomo Intense</h3>
+                
+                <select class="size-selector" id="p9-size">
+                    <option value="2ml" data-price="5000">2ml = 5,000 د.ع</option>
+                    <option value="3ml" data-price="8000">3ml = 8,000 د.ع</option>
+                    <option value="5ml" data-price="12000" selected>5ml = 12,000 د.ع</option>
+                    <option value="10ml" data-price="23000">10ml = 23,000 د.ع</option>
+                </select>
+                
+                <button class="btn-add-to-cart" onclick="addToCart(9)">إضافة إلى السلة</button>
+            </div>
+
+             <div class="product-card">
+                <img src="https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.113443.avif" alt="10" class="product-img" onerror="this.src='https://via.placeholder.com/250x250?text=Perfume+1'">
+                <h3 class="product-title" id="p10-title">Valentino Uomo Born in Roma Ivory</h3>
+                
+                <select class="size-selector" id="p10-size">
+                    <option value="2ml" data-price="5000">2ml = 5,000 د.ع</option>
+                    <option value="3ml" data-price="8000">3ml = 8,000 د.ع</option>
+                    <option value="5ml" data-price="12000" selected>5ml = 12,000 د.ع</option>
+                    <option value="10ml" data-price="23000">10ml = 23,000 د.ع</option>
+                </select>
+                
+                <button class="btn-add-to-cart" onclick="addToCart(10)">إضافة إلى السلة</button>
+            </div>
+
+             <div class="product-card">
+                <img src="https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.46115.avif" alt="11" class="product-img" onerror="this.src='https://via.placeholder.com/250x250?text=Perfume+1'">
+                <h3 class="product-title" id="p11-title">Rosendo Mateu Nº 5</h3>
+                
+                <select class="size-selector" id="p11-size">
+                    <option value="2ml" data-price="5000">2ml = 5,000 د.ع</option>
+                    <option value="3ml" data-price="8000">3ml = 8,000 د.ع</option>
+                    <option value="5ml" data-price="11000" selected>5ml = 11,000 د.ع</option>
+                    <option value="10ml" data-price="21000">10ml = 21,000 د.ع</option>
+                </select>
+                
+                <button class="btn-add-to-cart" onclick="addToCart(11)">إضافة إلى السلة</button>
+            </div>
+
+             <div class="product-card">
+                <img src="https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.17.avif" alt="12" class="product-img" onerror="this.src='https://via.placeholder.com/250x250?text=Perfume+1'">
+                <h3 class="product-title" id="p12-title">Terre d'Hermès Hermès</h3>
+                
+                <select class="size-selector" id="p12-size">
+                    <option value="2ml" data-price="4000">2ml = 4,000 د.ع</option>
+                    <option value="3ml" data-price="6000">3ml = 6,000 د.ع</option>
+                    <option value="5ml" data-price="9000" selected>5ml = 9,000 د.ع</option>
+                    <option value="10ml" data-price="17000">10ml = 17,000 د.ع</option>
+                </select>
+                
+                <button class="btn-add-to-cart" onclick="addToCart(12)">إضافة إلى السلة</button>
+            </div>
+
+            <div class="product-card">
+                <img src="https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.122212.avif" alt="13" class="product-img" onerror="this.src='https://via.placeholder.com/250x250?text=Perfume+1'">
+                <h3 class="product-title" id="p13-title">Le Male In Blue Jean Paul Gaultier</h3>
+                
+                <select class="size-selector" id="p13-size">
+                    <option value="2ml" data-price="5000">2ml = 5,000 د.ع</option>
+                    <option value="3ml" data-price="8000">3ml = 8,000 د.ع</option>
+                    <option value="5ml" data-price="12000" selected>5ml = 12,000 د.ع</option>
+                    <option value="10ml" data-price="23000">10ml = 23,000 د.ع</option>
+                </select>
+                
+                <button class="btn-add-to-cart" onclick="addToCart(13)">إضافة إلى السلة</button>
+            </div>
+
+            <div class="product-card">
+                <img src="https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.58714.avif" alt="14" class="product-img" onerror="this.src='https://via.placeholder.com/250x250?text=Perfume+1'">
+                <h3 class="product-title" id="p14-title">Dior Homme 2020</h3>
+                
+                <select class="size-selector" id="p14-size">
+                    <option value="2ml" data-price="5000">2ml = 5,000 د.ع</option>
+                    <option value="3ml" data-price="8000">3ml = 8,000 د.ع</option>
+                    <option value="5ml" data-price="12000" selected>5ml = 12,000 د.ع</option>
+                    <option value="10ml" data-price="23000">10ml = 23,000 د.ع</option>
+                </select>
+                
+                <button class="btn-add-to-cart" onclick="addToCart(14)">إضافة إلى السلة</button>
+            </div>
+
+            <div class="product-card">
+                <img src="https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.107110.avif" alt="15" class="product-img" onerror="this.src='https://via.placeholder.com/250x250?text=Perfume+1'">
+                <h3 class="product-title" id="p15-title">Fico di Amalfi La Riserva di Acqua di Parma</h3>
+                
+                <select class="size-selector" id="p15-size">
+                    <option value="2ml" data-price="5000">2ml = 5,000 د.ع</option>
+                    <option value="3ml" data-price="8000">3ml = 8,000 د.ع</option>
+                    <option value="5ml" data-price="12000" selected>5ml = 12,000 د.ع</option>
+                    <option value="10ml" data-price="23000">10ml = 23,000 د.ع</option>
+                </select>
+                
+                <button class="btn-add-to-cart" onclick="addToCart(15)">إضافة إلى السلة</button>
+            </div>
+
+            <div class="product-card">
+                <img src="https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.54785.avif" alt="16" class="product-img" onerror="this.src='https://via.placeholder.com/250x250?text=Perfume+1'">
+                <h3 class="product-title" id="p16-title">Ani Nishane</h3>
+                
+                <select class="size-selector" id="p16-size">
+                    <option value="2ml" data-price="7000">2ml = 7,000 د.ع</option>
+                    <option value="3ml" data-price="10000">3ml = 10,000 د.ع</option>
+                    <option value="5ml" data-price="16000" selected>5ml = 16,000 د.ع</option>
+                    <option value="10ml" data-price="30000">10ml = 30,000 د.ع</option>
+                </select>
+                
+                <button class="btn-add-to-cart" onclick="addToCart(16)">إضافة إلى السلة</button>
+            </div>
+
+            <div class="product-card">
+                <img src="https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.107802.avif" alt="17" class="product-img" onerror="this.src='https://via.placeholder.com/250x250?text=Perfume+1'">
+                <h3 class="product-title" id="p17-title">Versace Man Eau Fraiche Extreme</h3>
+                
+                <select class="size-selector" id="p17-size">
+                    <option value="3ml" data-price="5000">3ml = 5,000 د.ع</option>
+                    <option value="5ml" data-price="8000" selected>5ml = 8,000 د.ع</option>
+                    <option value="10ml" data-price="15000">10ml = 15,000 د.ع</option>
+                </select>
+                
+                <button class="btn-add-to-cart" onclick="addToCart(17)">إضافة إلى السلة</button>
+            </div>
+
+             <div class="product-card">
+                <img src="https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.95642.avif" alt="18" class="product-img" onerror="this.src='https://via.placeholder.com/250x250?text=Perfume+1'">
+                <h3 class="product-title" id="p18-title">Le Sel d’Issey Issey Miyake</h3>
+                
+                <select class="size-selector" id="p18-size">
+                    <option value="2ml" data-price="3000">2ml = 3,000 د.ع</option>
+                    <option value="3ml" data-price="5000">3ml = 5,000 د.ع</option>
+                    <option value="5ml" data-price="8000" selected>5ml = 8,000 د.ع</option>
+                    <option value="10ml" data-price="15000">10ml = 15,000 د.ع</option>
+                </select>
+                
+                <button class="btn-add-to-cart" onclick="addToCart(18)">إضافة إلى السلة</button>
+            </div>
+
+             <div class="product-card">
+                <img src="https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.112859.avif" alt="19" class="product-img" onerror="this.src='https://via.placeholder.com/250x250?text=Perfume+1'">
+                <h3 class="product-title" id="p19-title">Dynasty Lattafa</h3>
+                
+                <select class="size-selector" id="p18-size">
+                    <option value="5ml" data-price="8000" selected>5ml = 3,000 د.ع</option>
+                    <option value="10ml" data-price="15000">10ml = 6,000 د.ع</option>
+                </select>
+                
+                <button class="btn-add-to-cart" onclick="addToCart(19)">إضافة إلى السلة</button>
+            </div>
+
+             <div class="product-card">
+                <img src="https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.98689.avif" alt="24" class="product-img" onerror="this.src='https://via.placeholder.com/250x250?text=Perfume+1'">
+                <h3 class="product-title" id="p24-title">Supremacy Collector's Edition Afnan</h3>
+                
+                <select class="size-selector" id="p24-size">
+                    <option value="5ml" data-price="8000" selected>5ml = 3,000 د.ع</option>
+                    <option value="10ml" data-price="15000">10ml = 6,000 د.ع</option>
+                </select>
+                
+                <button class="btn-add-to-cart" onclick="addToCart(24)">إضافة إلى السلة</button>
+            </div>
+
+            <div class="product-card">
+                <img src="https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.113595.avif" alt="20" class="product-img" onerror="this.src='https://via.placeholder.com/250x250?text=Perfume+1'">
+                <h3 class="product-title" id="p20-title">Atlantis Extrait French Avenue</h3>
+                
+                <select class="size-selector" id="p20-size">
+                    <option value="5ml" data-price="8000" selected>5ml = 3,000 د.ع</option>
+                    <option value="10ml" data-price="15000">10ml = 6,000 د.ع</option>
+                </select>
+                
+                <button class="btn-add-to-cart" onclick="addToCart(20)">إضافة إلى السلة</button>
+            </div>
+
+             <div class="product-card">
+                <img src="https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.94702.avif" alt="21" class="product-img" onerror="this.src='https://via.placeholder.com/250x250?text=Perfume+1'">
+                <h3 class="product-title" id="p21-title">Aether French Avenue</h3>
+                
+                <select class="size-selector" id="p21-size">
+                    <option value="5ml" data-price="8000" selected>5ml = 3,000 د.ع</option>
+                    <option value="10ml" data-price="15000">10ml = 6,000 د.ع</option>
+                </select>
+                
+                <button class="btn-add-to-cart" onclick="addToCart(21)">إضافة إلى السلة</button>
+            </div>
+
+            <div class="product-card">
+                <img src="https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.94713.avif" alt="22" class="product-img" onerror="this.src='https://via.placeholder.com/250x250?text=Perfume+1'">
+                <h3 class="product-title" id="p22-title">Liquid Brun French Avenue</h3>
+                
+                <select class="size-selector" id="p22-size">
+                    <option value="5ml" data-price="8000" selected>5ml = 3,000 د.ع</option>
+                    <option value="10ml" data-price="15000">10ml = 6,000 د.ع</option>
+                </select>
+                
+                <button class="btn-add-to-cart" onclick="addToCart(22)">إضافة إلى السلة</button>
+            </div>
+
+             <div class="product-card">
+                <img src="https://fimgs.net/mdimg/perfume-thumbs/dark-375x500.122624.avif" alt="23" class="product-img" onerror="this.src='https://via.placeholder.com/250x250?text=Perfume+1'">
+                <h3 class="product-title" id="p23-title">Marmara French Avenue</h3>
+                
+                <select class="size-selector" id="p23-size">
+                    <option value="5ml" data-price="8000" selected>5ml = 3,000 د.ع</option>
+                    <option value="10ml" data-price="15000">10ml = 6,000 د.ع</option>
+                </select>
+                
+                <button class="btn-add-to-cart" onclick="addToCart(23)">إضافة إلى السلة</button>
+            </div>
+
+            
+        </div>
+
+        <div class="checkout-section" id="checkout-area">
+            <h2>إتمام عملية الشراء</h2>
+            
+            <div class="cart-summary">
+                <h4>العناصر المضافة:</h4>
+                <div id="cart-items-list" style="margin-top: 10px;">
+                    <p style="color: #888;">السلة فارغة حالياً، اختر حكماً وأضف عطراً.</p>
+                </div>
+            </div>
+
+            <form id="order-form" onsubmit="sendToWhatsApp(event)">
+                <div class="form-group">
+                    <label>الاسم الكامل:</label>
+                    <input type="text" id="cust-name" class="form-control" placeholder="اكتب اسمك الثلاثي" required>
+                </div>
+                <div class="form-group">
+                    <label>رقم الهاتف:</label>
+                    <input type="tel" id="cust-phone" class="form-control" placeholder="07XXXXXXXX" required>
+                </div>
+                <div class="form-group">
+                    <label>المحافظة:</label>
+                    <input type="text" id="cust-city" class="form-control" placeholder="اسم المحافظة" required>
+                </div>
+                <div class="form-group">
+                    <label>أقرب نقطة دالة:</label>
+                    <input type="text" id="cust-landmark" class="form-control" placeholder="مثال: قرب مدرسة أو مجمع طبي" required>
+                </div>
+
+                <div class="price-summary">
+                    <div class="price-row">
+                        <span>مبلغ الطلب (بدون أجور التوصيل):</span>
+                        <span><span id="subtotal-val">0</span> د.ع</span>
+                    </div>
+                    <div class="price-row">
+                        <span>أجور التوصيل (كافة المحافظات):</span>
+                        <span>5,000 د.ع</span>
+                    </div>
+                    <div class="price-row total">
+                        <span>المبلغ الكلي (مع أجور التوصيل):</span>
+                        <span><span id="total-val">0</span> د.ع</span>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-checkout">
+                    <i class="fa-brands fa-whatsapp"></i> تأكيد الشراء وإرسال الطلب عبر واتساب
+                </button>
+            </form>
+        </div>
+
+    </div>
+
+    <script>
+        // ضع رقم الواتساب الخاص بك هنا بالصيغة الدولية وبدون أصفار أو علامة +
+        const WHATSAPP_NUMBER = "9647723580115"; 
+        
+        let cart = [];
+        const deliveryFee = 5000;
+
+        function addToCart(productId) {
+            let title = document.getElementById(`p${productId}-title`).innerText;
+            let selectElement = document.getElementById(`p${productId}-size`);
+            let size = selectElement.value;
+            let price = parseInt(selectElement.options[selectElement.selectedIndex].getAttribute('data-price'));
+
+            // إضافة العنصر إلى السلة (أو تحديثه إذا كان مضافاً مسبقاً)
+            cart.push({ title, size, price });
+            
+            updateCartUI();
+            
+            // الانتقال السلس إلى واجهة الشراء عند إضافة أي عطر
+            scrollToCheckout();
+        }
+
+        function updateCartUI() {
+            // تحديث عداد السلة في الهيدر العلوي
+            document.getElementById('cart-count').innerText = cart.length;
+
+            let listContainer = document.getElementById('cart-items-list');
+            if(cart.length === 0) {
+                listContainer.innerHTML = '<p style="color: #888;">السلة فارغة حالياً.</p>';
+                document.getElementById('subtotal-val').innerText = "0";
+                document.getElementById('total-val').innerText = "0";
+                return;
+            }
+
+            let html = "";
+            let subtotal = 0;
+            
+            cart.forEach((item, index) => {
+                subtotal += item.price;
+                html += `
+                    <div class="cart-item-row">
+                        <span>• ${item.title} (${item.size})</span>
+                        <span>${item.price.toLocaleString()} د.ع</span>
+                    </div>
+                `;
+            });
+
+            listContainer.innerHTML = html;
+            document.getElementById('subtotal-val').innerText = subtotal.toLocaleString();
+            document.getElementById('total-val').innerText = (subtotal + deliveryFee).toLocaleString();
+        }
+
+        function scrollToCheckout() {
+            document.getElementById('checkout-area').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function sendToWhatsApp(event) {
+            event.preventDefault(); // منع تحديث الصفحة
+
+            if(cart.length === 0) {
+                alert("يرجى إضافة عطر واحد على الأقل إلى السلة أولاً!");
+                return;
+            }
+
+            // جلب بيانات الزبون
+            const name = document.getElementById('cust-name').value;
+            const phone = document.getElementById('cust-phone').value;
+            const city = document.getElementById('cust-city').value;
+            const landmark = document.getElementById('cust-landmark').value;
+
+            let subtotal = 0;
+            let itemsText = "";
+            
+            cart.forEach((item) => {
+                subtotal += item.price;
+                itemsText += `- ${item.title} (الحجم: ${item.size}) [السعر: ${item.price.toLocaleString()} د.ع]\n`;
+            });
+
+            let grandTotal = subtotal + deliveryFee;
+
+            // بناء الرسالة للواتساب بشكل مرتب ومنظم جداً
+            let msg = `✨ *طلب جديد من متجر نَبِعْ* ✨\n\n`;
+            msg += `📝 *معلومات التوصيل:*\n`;
+            msg += `▪️ *الاسم:* ${name}\n`;
+            msg += `▪️ *الرقم:* ${phone}\n`;
+            msg += `▪️ *المحافظة:* ${city}\n`;
+            msg += `▪️ *أقرب نقطة دالة:* ${landmark}\n\n`;
+            msg += `📦 *قائمة المشتريات:*\n${itemsText}\n`;
+            msg += `💰 *مبلغ الطلب (بدون توصيل):* ${subtotal.toLocaleString()} د.ع\n`;
+            msg += `🚚 *أجور التوصيل:* 5,000 د.ع\n`;
+            msg += `💵 *المبلغ الكلي مع التوصيل:* ${grandTotal.toLocaleString()} د.ع`;
+
+            // تشفير النص لفتحه كـ رابط
+            const encodedMsg = encodeURIComponent(msg);
+            
+            // فتح الواتساب ونقل العميل لإرسال الرسالة لك تلقائياً
+            window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMsg}`, '_blank');
+        }
+    </script>
+</body>
+</html>
